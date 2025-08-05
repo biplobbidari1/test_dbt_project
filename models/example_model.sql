@@ -4,6 +4,6 @@ SELECT
 
 1 AS id,
 
-'John' AS name,
+'Biplob' AS name,
 
 25 AS age
