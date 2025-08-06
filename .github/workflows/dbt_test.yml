@@ -42,7 +42,7 @@ jobs:
                 threads: 1
                 sslmode: prefer
           EOF
-
+        shell: bash
       - name: Install dependencies
         run: dbt deps
 
