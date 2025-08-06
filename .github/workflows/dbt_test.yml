@@ -24,6 +24,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Create profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          echo "${{ secrets.DBT_PROFILES_YML }}" > ~/.dbt/profiles.yml
+          dbt_project:
+            target: dev
+            outputs:
+              dev:
+                type: postgres
+                host: "${DBT_HOST}"
+                user: "${DBT_USER}"
+                password: "${DBT_PASSWORD}"
+                port: ${DBT_PORT}
+                dbname: "${DBT_DBNAME}"
+                schema: public
+                threads: 1
+                sslmode: prefer
+          EOF
+
       - name: Install dependencies
         run: dbt deps
 
