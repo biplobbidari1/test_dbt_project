@@ -27,7 +27,7 @@ jobs:
       - name: Create profiles.yml
         run: |
           mkdir -p ~/.dbt
-          echo "${{ secrets.DBT_PROFILES_YML }}" > ~/.dbt/profiles.yml
+          echo "${{ secrets.PROFILES_YML }}" > ~/.dbt/profiles.yml
           dbt_project:
             target: dev
             outputs:
