@@ -13,13 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/dbt-labs/dbt-postgres:1.5.0
 
-    env:
-      DBT_HOST: ${{ secrets.DB_HOST }}
-      DBT_USER: ${{ secrets.DB_USER }}
-      DBT_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DBT_DBNAME: ${{ secrets.DB_NAME }}
-      DBT_PORT: ${{ secrets.DB_PORT }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,24 +20,25 @@ jobs:
       - name: Create profiles.yml
         run: |
           mkdir -p ~/.dbt
-          echo "${{ secrets.PROFILES_YML }}" > ~/.dbt/profiles.yml
-          dbt_project:
+          cat > ~/.dbt/profiles.yml <<EOF
+          my_dbt_project:
             target: dev
             outputs:
               dev:
                 type: postgres
-                host: "${DBT_HOST}"
-                user: "${DBT_USER}"
-                password: "${DBT_PASSWORD}"
-                port: ${DBT_PORT}
-                dbname: "${DBT_DBNAME}"
+                host: "${{ secrets.DB_HOST }}"
+                user: "${{ secrets.DB_USER }}"
+                password: "${{ secrets.DB_PASSWORD }}"
+                port: ${{ secrets.DB_PORT }}
+                dbname: "${{ secrets.DB_NAME }}"
                 schema: public
                 threads: 1
                 sslmode: prefer
           EOF
-        shell: bash
+
       - name: Install dependencies
         run: dbt deps
 
       - name: Run tests
         run: dbt test
+
