@@ -1,0 +1,44 @@
+name: dbt Tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'models/**'
+      - 'tests/**'
+      - 'dbt_project.yml'
+
+jobs:
+  test-models:
+    runs-on: ubuntu-latest
+    container: ghcr.io/dbt-labs/dbt-postgres:1.5.0
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml <<EOF
+          dbt_project:
+            target: dev
+            outputs:
+              dev:
+                type: postgres
+                host: "${{ secrets.DB_HOST }}"
+                user: "${{ secrets.DB_USER }}"
+                password: "${{ secrets.DB_PASSWORD }}"
+                port: ${{ secrets.DB_PORT }}
+                dbname: "${{ secrets.DB_NAME }}"
+                schema: public
+                threads: 1
+                sslmode: prefer
+          EOF
+
+      - name: Install dependencies
+        run: dbt deps
+
+      - name: Run tests
+        run: dbt test
+

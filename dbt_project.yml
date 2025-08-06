@@ -21,6 +21,5 @@ clean-targets:
   - "dbt_packages"
 
 models:
-  # dbt_project:
-  example_model:
+  dbt_project:
     +materialized: view
